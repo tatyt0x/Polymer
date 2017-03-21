@@ -1,0 +1,125 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>paper-datatable-api test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../src/paper-datatable-api.html">
+    <link rel="import" href="../src/paper-datatable-api-column.html">
+  </head>
+  <body>
+
+    <test-fixture id="simple">
+      <template>
+        <paper-datatable-api>
+          <paper-datatable-api-column header="Fruit" property="fruit" hideable>
+            <template>
+              <span>[[value]]</span>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="Color" property="color">
+            <template>
+              <div>[[value]]</div>
+            </template>
+          </paper-datatable-api-column>
+          <paper-datatable-api-column header="Color + fruit" property="color" hideable other-properties='["fruit"]'>
+            <template>
+              <div>[[otherValues.fruit]] is [[value]]</div>
+            </template>
+          </paper-datatable-api-column>
+        </paper-datatable-api>
+      </template>
+    </test-fixture>
+
+    <script>
+      var data = [
+{
+  "color": "yellow",
+  "fruit": "banana"
+},
+{
+  "fruit": "apple",
+  "color": "green"
+}
+      ];
+
+      suite('paper-datatable-api', function() {
+
+        test('Headers are setted', function(done) {
+          var paperDatatableApi = fixture('simple');
+          paperDatatableApi.data = data;
+
+          flush(function() {
+            var ths = paperDatatableApi.querySelectorAll('thead tr th');
+            assert.equal(ths[0].textContent.trim(), 'Fruit');
+            assert.equal(ths[1].textContent.trim(), 'Color');
+            assert.equal(ths[2].textContent.trim(), 'Color + fruit');
+            assert.equal(ths.length, 3);
+            done();
+          });
+        });
+
+        test('Have 2 rows', function(done) {
+          var paperDatatableApi = fixture('simple');
+          paperDatatableApi.data = data;
+
+          flush(function() {
+            var trs = paperDatatableApi.querySelectorAll('tbody tr');
+            assert.equal(trs.length, 2);
+            done();
+          });
+        });
+
+        test('Column are filled', function(done) {
+          var paperDatatableApi = fixture('simple');
+          paperDatatableApi.data = data;
+
+          flush(function() {
+            var trs = paperDatatableApi.querySelectorAll('tbody tr');
+            var tr1tds = trs[0].querySelectorAll('td');
+            assert.equal(tr1tds.length, 3);
+            assert.equal(tr1tds[0].querySelector('span').textContent, 'banana');
+            assert.equal(tr1tds[1].querySelector('div').textContent, 'yellow');
+            assert.equal(tr1tds[2].querySelector('div').textContent, 'banana is yellow');
+
+            var tr2tds = trs[1].querySelectorAll('td');
+            assert.equal(tr2tds.length, 3);
+            assert.equal(tr2tds[0].querySelector('span').textContent, 'apple');
+            assert.equal(tr2tds[1].querySelector('div').textContent, 'green');
+            assert.equal(tr2tds[2].querySelector('div').textContent, 'apple is green');
+            done();
+          });
+        });
+
+        test('Hide and show column', function(done) {
+          var paperDatatableApi = fixture('simple');
+          paperDatatableApi.data = data;
+
+          flush(function() {
+            var trs = paperDatatableApi.querySelectorAll('tbody tr');
+
+            var tr1tds = trs[0].querySelectorAll('td');
+            assert.equal(tr1tds[0].style.display, '');
+            paperDatatableApi.toggleColumn('fruit');
+            assert.equal(tr1tds[0].style.display, 'none');
+            paperDatatableApi.toggleColumn('fruit');
+            assert.equal(tr1tds[0].style.display, 'table-cell');
+            assert.equal(tr1tds[1].style.display, '');
+            paperDatatableApi.toggleColumn('color');
+            assert.equal(tr1tds[1].style.display, '');
+            assert.equal(tr1tds[2].style.display, '');
+            paperDatatableApi.toggleColumn('weight');
+            assert.equal(tr1tds[0].style.display, 'table-cell');
+            assert.equal(tr1tds[1].style.display, '');
+            done();
+          });
+        });
+
+      });
+    </script>
+  </body>
+</html>
