@@ -1,0 +1,38 @@
+
+<link rel="import" href="../vaadin-grid/vaadin-grid.html">
+
+<dom-module id="poly-reja">
+
+<template>
+
+<vaadin-grid id="grid-objects-source" items=[[datos]] visible-rows="10">
+  
+  <table>  
+    <colgroup>
+      <col name="LEGAJO">
+      <col name="NOMBRE">
+    </colgroup>
+    
+    <thead>
+      <tr>
+        <th>Legajo</th>
+        <th>Nombre</th>
+      </tr>
+    </thead>
+    
+  </table>
+</vaadin-grid>
+    
+</template>
+
+  <script>
+    Polymer({
+      is: 'poly-reja',
+      properties: {
+          datos: Object
+      }
+    });
+
+
+</script>
+</dom-module>
